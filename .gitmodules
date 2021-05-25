@@ -7,6 +7,7 @@
 [submodule "verilog/hardware/processor/sail-core"]
 	path = verilog/hardware/processor/sail-core
 	url = https://github.com/AkThao/Sail-RV32I-common.git
+    branch = performance
 [submodule "tools/srec2hex"]
 	path = tools/srec2hex
 	url = ../../physical-computation/srec2hex.git
