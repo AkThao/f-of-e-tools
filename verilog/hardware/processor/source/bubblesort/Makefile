@@ -25,7 +25,7 @@ OBJS-SF		=\
 		$(INIT-SF).o\
 		$(PROGRAM).o\
 
-all:	$(PROGRAM) $(PROGRAM).sr $(PROGRAM-SF) $(PROGRAM-SF).sr Makefile
+all:	$(PROGRAM) $(PROGRAM).sr Makefile
 
 $(INIT).o: $(INIT).S
 	$(AS) $(ASFLAGS) $(INIT).S -o $(INIT).o
