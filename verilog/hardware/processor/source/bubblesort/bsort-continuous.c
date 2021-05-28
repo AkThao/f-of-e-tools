@@ -1,39 +1,41 @@
-#include "sf-types.h"
-//#include "sh7708.h"
-//#include "devscc.h"
-//#include "print.h"
-#include "bsort-input.h"
-
-
-int
-main(void)
+int main(void)
 {
-while (1) {
-	int i;
-	int maxindex = bsort_input_len - 1;
+	volatile unsigned int *output_register = (unsigned int *) 0x2000;
+	unsigned char output = 0xFF;
+	const int bsort_input_len = 0x3b;
+	*output_register = output;
 
-	// copy the input to a new array
-	uchar bsort_output[bsort_input_len];
-	for (i=0; i<bsort_input_len; i++) {
-		bsort_output[i] = bsort_input[i];
-	}
-
-	//print("\n\n[%s]\n", bsort_input);
-	while (maxindex > 0)
+	while(1)
 	{
-		for (i = 0; i < maxindex; i++)
+		char bsort_input[] = {0x53, 0x69, 0x6e, 0x67, 0x20, 0x74, 0x6f, 0x20, 0x6d, 0x65,
+				      0x20, 0x6f, 0x66, 0x20, 0x74, 0x68, 0x65, 0x20, 0x6d, 0x61,
+				      0x6e, 0x2c, 0x20, 0x4d, 0x75, 0x73, 0x65, 0x2c, 0x20, 0x74,
+				      0x68, 0x65, 0x20, 0x6d, 0x61, 0x6e, 0x20, 0x6f, 0x66, 0x20,
+				      0x74, 0x77, 0x69, 0x73, 0x74, 0x73, 0x20, 0x61, 0x6e, 0x64,
+				      0x20, 0x74, 0x75, 0x72, 0x6e, 0x73, 0x2e, 0x2e, 0x2e};
+
+		int maxindex = bsort_input_len - 1;
+
+		while (maxindex > 0)
 		{
-			if (bsort_output[i] > bsort_output[i+1])
+			for (int i = 0; i < maxindex; i++)
 			{
-				/*		swap		*/
-				bsort_output[i] ^= bsort_output[i+1];
-				bsort_output[i+1] ^= bsort_output[i];
-				bsort_output[i] ^= bsort_output[i+1];
+				if (bsort_input[i] > bsort_input[i+1])
+				{
+					/*		swap		*/
+					bsort_input[i] ^= bsort_input[i+1];
+					bsort_input[i+1] ^= bsort_input[i];
+					bsort_input[i] ^= bsort_input[i+1];
+				}
 			}
+
+			maxindex--;
 		}
 
-		maxindex--;
+		if (output == 0xFF) output = 0x00;
+		else output = 0xFF;
+		*output_register = output;
 	}
-	//print("[%s]\n", bsort_input);
-}
+
+	return 0;
 }
