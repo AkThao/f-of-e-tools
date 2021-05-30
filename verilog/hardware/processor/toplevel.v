@@ -48,6 +48,8 @@ module top (led);
 	wire		data_clk_stall;
 	
 	wire		clk;
+	wire 		pll_in; 
+
 	reg		ENCLKHF		= 1'b1;	// Plock enable
 	reg		CLKHF_POWERUP	= 1'b1;	// Power up the HFOSC circuit
 
@@ -55,11 +57,12 @@ module top (led);
 	/*
 	 *	Use the iCE40's hard primitive for the clock source.
 	 */
-	SB_HFOSC #(.CLKHF_DIV("0b11")) OSCInst0 (
+	SB_HFOSC #(.CLKHF_DIV("0b10")) OSCInst0 (
 		.CLKHFEN(ENCLKHF),
 		.CLKHFPU(CLKHF_POWERUP),
-		.CLKHF(clk)
+		.CLKHF(pll_in)
 	);
+	pll_clock clock_pll(pll_in, clk);
 
 	/*
 	 *	Memory interface
