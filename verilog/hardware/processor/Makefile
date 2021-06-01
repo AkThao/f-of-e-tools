@@ -29,7 +29,7 @@ design:
 #	sed "s/toplevel/$(DESIGN)-core\/verilog\/toplevel/" |\
 	sed "s/blif$$/blif\nwrite_verilog $(DESIGN)-$(PROGRAM)-synth.v/" > $(DESIGN)-$(PROGRAM).ys
 	yosys -q $(DESIGN)-$(PROGRAM).ys
-	yosys -p "show -format pdf -prefix $(DESIGN)-$(PROGRAM) -colors 10 -width -stretch" $(DESIGN)-$(PROGRAM)-synth.v
+#	yosys -p "show -format pdf -prefix $(DESIGN)-$(PROGRAM) -colors 10 -width -stretch" $(DESIGN)-$(PROGRAM)-synth.v
 	test -s pcf/$(DESIGN)-$(PROGRAM).pcf || cp pcf/sail.pcf pcf/$(DESIGN)-$(PROGRAM).pcf
 	nextpnr-ice40 --up5k --package uwg30 --json $(DESIGN)-$(PROGRAM).json --pcf pcf/$(DESIGN)-$(PROGRAM).pcf --asc $(DESIGN)-$(PROGRAM).asc --log $(DESIGN)-$(PROGRAM)-pnr.txt
 	icetime -p pcf/$(DESIGN)-$(PROGRAM).pcf -P uwg30 -d up5k -t $(DESIGN)-$(PROGRAM).asc
