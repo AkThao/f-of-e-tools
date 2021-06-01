@@ -4,6 +4,8 @@
 *.bin
 *.asc
 *.ys
+*-synth.v
+*-pnr.txt
 
 # generated from the software build
 *.i
