@@ -1,16 +1,8 @@
 DESIGN  = sail
 PROGRAM = template
 
-# First recipe in the Makefile is the default recipe. The software compilation and the hardware build are required for this recipe.
-all: program design
 
-
-# Software (program) recipe:
-#	Change directory to the appropriate software's directory and run make if it exists.
-program:
-	cd source/$(PROGRAM) && ($(MAKE); $(MAKE) install)
-	cd $(CURDIR) # Change back to the original directory
-
+# First recipe in the Makefile is the default recipe
 # Hardware (design) recipe:
 #       Copy the hex files to be besides all the design .v files
 #       Copy the toplevel design if its not already present into the processor build (to allow for different builds with different toplevels).
@@ -39,11 +31,18 @@ design:
 #	sudo iceprog -S $(DESIGN)-$(PROGRAM).bin
 
 
+# Software (program) recipe:
+#	Change directory to the appropriate software's directory and run make if it exists.
+program:
+	cd source/$(PROGRAM) && ($(MAKE); $(MAKE) install)
+	cd $(CURDIR) # Change back to the original directory
+
+
+# The software compilation and the hardware build are required for this comprehensive recipe.
+all: program design
+
 clean-program:
 	cd source/$(PROGRAM) && $(MAKE) clean
 	cd $(CURDIR)
 clean:
-	rm -f *.json *.blif *.asc *.bin *.ys
-
-clean-synths:
-	rm *synth.v
+	rm -f *.json *.blif *.asc *.bin *.ys *-synth.v *-pnr.txt
