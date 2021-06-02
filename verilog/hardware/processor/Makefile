@@ -1,16 +1,16 @@
 DESIGN  = sail
-PROGRAM = template
+PROGRAM = bsort
 
 
 # First recipe in the Makefile is the default recipe
 # Hardware (design) recipe:
-#       Copy the hex files to be besides all the design .v files
-#       Copy the toplevel design if its not already present into the processor build (to allow for different builds with different toplevels).
-#       In the yosys script, change the project name, remove CSR.v from the build, and tell it to output the
+#	Copy the hex files to be besides all the design .v files
+#	Copy the toplevel design if its not already present into the processor build (to allow for different builds with different toplevels).
+#	In the yosys script, change the project name, remove CSR.v from the build, and tell it to output the
 #	final synthesised .v file for examination, saving this all as a new yscript into the current directory.
-#       Run yosys quietly with desired project name.
+#	Run yosys quietly with desired project name.
 #	If one doesn't already exist, create a custom pcf for the design+program build by copying and renaming sail.pcf.
-#       Run the rest of the build with the desired project naming system.
+#	Run the rest of the build with the desired project naming system.
 #	The output of nextpnr and icetime is saved into one file, with 4 extra newlines to separate them.
 design:
 	cp programs/data.hex $(DESIGN)-core/verilog/
@@ -47,3 +47,4 @@ clean-program:
 	cd $(CURDIR)
 clean:
 	rm -f *.json *.blif *.asc *.bin *.ys *-synth.v *-pnr.txt
+	rm programs/*
