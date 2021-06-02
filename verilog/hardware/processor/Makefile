@@ -25,6 +25,7 @@ design:
 #	test -s $(DESIGN)-core/verilog/toplevel.v || cp toplevel.v $(DESIGN)-core/verilog/toplevel.v
 	cat ../../../yscripts/sail.ys |\
 	sed "s/sail/$(DESIGN)-$(PROGRAM)/" |\
+	sed "s/verilog\/CSR\.v //g" |\
 	sed "s/verilog\//$(DESIGN)-core\/verilog\//g" |\
 #	sed "s/toplevel/$(DESIGN)-core\/verilog\/toplevel/" |\
 	sed "s/blif$$/blif\nwrite_verilog $(DESIGN)-$(PROGRAM)-synth.v/" > $(DESIGN)-$(PROGRAM).ys
