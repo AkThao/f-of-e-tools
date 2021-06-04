@@ -1,0 +1,15 @@
+# generated from the hardware build
+*.blif
+*.json
+*.bin
+*.asc
+*.ys
+*-synth.v
+*-pnr.txt
+
+# generated from the software build
+*.i
+*.o
+*.sr
+*.hex
+*.map

@@ -1,16 +1,16 @@
-TREEROOT	= /data/f-of-e-tools
+TREEROOT	= /data/f-of-e-tools/
 include $(TREEROOT)/tools/sunflower/conf/setup.conf
 
 TARGET-ARCH	= riscv32-elf
 TARGET		= riscv
 
-PROGRAM		= template
-PROGRAM-SF	= template-sf
+PROGRAM		= bsort
+PROGRAM-SF	= bsort-sf
 INIT		= init
 INIT-SF		= init-sf
 
 OPTFLAGS	= -O0
-CFLAGS		= -march=rv32i -mabi=ilp32 $(TARGET-ARCH-FLAGS) -Wall 
+CFLAGS		= -march=rv32i -mabi=ilp32 $(TARGET-ARCH-FLAGS) -Wall
 ASFLAGS		= --march=rv32i --mabi=ilp32
 LDFLAGS		= -L$(TOOLSLIB)/$(TARGET) -Map $(PROGRAM).map -Tsail.ld
 LDFLAGS-SF	= -Ttext $(LOADADDR-SF)  -L$(TOOLSLIB)/$(TARGET) -Map $(PROGRAM).map
@@ -25,7 +25,7 @@ OBJS-SF		=\
 		$(INIT-SF).o\
 		$(PROGRAM).o\
 
-all:	$(PROGRAM) $(PROGRAM).sr $(PROGRAM-SF) $(PROGRAM-SF).sr Makefile
+all:	$(PROGRAM) $(PROGRAM).sr Makefile
 
 $(INIT).o: $(INIT).S
 	$(AS) $(ASFLAGS) $(INIT).S -o $(INIT).o
