@@ -14,3 +14,4 @@ init:
 
 
 __errno:
+	.long	0
