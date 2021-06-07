@@ -4,8 +4,8 @@ DESIGN  = sail
 # Decides source code directory for software.
 PROGRAM = bsort
 
-LAST := 10
-NUMBERS := $(shell seq 1 ${LAST})
+ATTEMPTS := 5
+NUMBERS := $(shell seq 1 ${ATTEMPTS})
 JOBS := $(addprefix pnr,${NUMBERS})
 
 
