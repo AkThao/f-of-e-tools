@@ -1,8 +1,17 @@
+# Purely for control over output build name. Always gets HDL source code from sail-core directory.
 DESIGN  = sail
+
+# Decides source code directory for software.
 PROGRAM = bsort
+
+LAST := 10
+NUMBERS := $(shell seq 1 ${LAST})
+JOBS := $(addprefix pnr,${NUMBERS})
 
 
 # First recipe in the Makefile is the default recipe
+design: synth ${JOBS}
+
 # Hardware (design) recipe:
 #	Copy the hex files to be besides all the design .v files
 #	Copy the toplevel design if its not already present into the processor build (to allow for different builds with different toplevels).
@@ -12,24 +21,20 @@ PROGRAM = bsort
 #	If one doesn't already exist, create a custom pcf for the design+program build by copying and renaming sail.pcf.
 #	Run the rest of the build with the desired project naming system.
 #	The output of nextpnr and icetime is saved into one file, with 4 extra newlines to separate them.
-design:
-	cp programs/data.hex $(DESIGN)-core/verilog/
-	cp programs/program.hex $(DESIGN)-core/verilog/
-#	test -s $(DESIGN)-core/verilog/toplevel.v || cp toplevel.v $(DESIGN)-core/verilog/toplevel.v
+synth:
 	cat ../../../yscripts/sail.ys |\
 	sed "s/sail/$(DESIGN)-$(PROGRAM)/" |\
 	sed "s/verilog\/CSR\.v //g" |\
-#	sed "s/verilog\//$(DESIGN)-core\/verilog\//g" |\
-#	sed "s/toplevel/$(DESIGN)-core\/verilog\/toplevel/" |\
 	sed "s/blif$$/blif\nwrite_verilog $(DESIGN)-$(PROGRAM)-synth.v/" > $(DESIGN)-$(PROGRAM).ys
 	yosys -q $(DESIGN)-$(PROGRAM).ys
-#	yosys -p "show -format pdf -prefix $(DESIGN)-$(PROGRAM) -colors 10 -width -stretch" $(DESIGN)-$(PROGRAM)-synth.v
 	test -s pcf/$(DESIGN)-$(PROGRAM).pcf || cp pcf/sail.pcf pcf/$(DESIGN)-$(PROGRAM).pcf;
-	nextpnr-ice40 --up5k --package uwg30 --json $(DESIGN)-$(PROGRAM).json --pcf pcf/$(DESIGN)-$(PROGRAM).pcf --asc $(DESIGN)-$(PROGRAM).asc --log $(DESIGN)-$(PROGRAM)-pnr.txt
-	echo >> $(DESIGN)-$(PROGRAM)-pnr.txt; echo >> $(DESIGN)-$(PROGRAM)-pnr.txt; echo >> $(DESIGN)-$(PROGRAM)-pnr.txt; echo >> $(DESIGN)-$(PROGRAM)-pnr.txt;
-	icetime -p pcf/$(DESIGN)-$(PROGRAM).pcf -P uwg30 -d up5k -t $(DESIGN)-$(PROGRAM).asc 2>&1 | tee -a $(DESIGN)-$(PROGRAM)-pnr.txt
-	icepack $(DESIGN)-$(PROGRAM).asc $(DESIGN)-$(PROGRAM).bin
-#	sudo iceprog -S $(DESIGN)-$(PROGRAM).bin
+${JOBS}: pnr%: synth
+	nextpnr-ice40 --up5k --package uwg30 --json $(DESIGN)-$(PROGRAM).json --pcf pcf/$(DESIGN)-$(PROGRAM).pcf --asc $(DESIGN)-$(PROGRAM)$*.asc --log $(DESIGN)-$(PROGRAM)$*-pnr.txt
+	echo >> $(DESIGN)-$(PROGRAM)$*-pnr.txt; echo >> $(DESIGN)-$(PROGRAM)$*-pnr.txt; echo >> $(DESIGN)-$(PROGRAM)$*-pnr.txt; echo >> $(DESIGN)-$(PROGRAM)$*-pnr.txt;
+	icetime -p pcf/$(DESIGN)-$(PROGRAM).pcf -P uwg30 -d up5k -t $(DESIGN)-$(PROGRAM)$*.asc 2>&1 | tee -a $(DESIGN)-$(PROGRAM)$*-pnr.txt
+	{ echo $(DESIGN)-$(PROGRAM)$* | tr "\n" "\t\t"; tail -n 2 $(DESIGN)-$(PROGRAM)$*-pnr.txt | head -n 1; }  >> pnr-timings.txt
+	icepack $(DESIGN)-$(PROGRAM)$*.asc $(DESIGN)-$(PROGRAM)$*.bin
+
 
 
 # Software (program) recipe:
