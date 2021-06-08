@@ -29,11 +29,11 @@ synth:
 	yosys -q $(DESIGN)-$(PROGRAM).ys
 	test -s pcf/$(DESIGN)-$(PROGRAM).pcf || cp pcf/sail.pcf pcf/$(DESIGN)-$(PROGRAM).pcf;
 ${JOBS}: pnr%: synth
-	nextpnr-ice40 --up5k --package uwg30 --json $(DESIGN)-$(PROGRAM).json --pcf pcf/$(DESIGN)-$(PROGRAM).pcf --asc $(DESIGN)-$(PROGRAM)$*.asc --log $(DESIGN)-$(PROGRAM)$*-pnr.txt
-	echo >> $(DESIGN)-$(PROGRAM)$*-pnr.txt; echo >> $(DESIGN)-$(PROGRAM)$*-pnr.txt; echo >> $(DESIGN)-$(PROGRAM)$*-pnr.txt; echo >> $(DESIGN)-$(PROGRAM)$*-pnr.txt;
-	icetime -p pcf/$(DESIGN)-$(PROGRAM).pcf -P uwg30 -d up5k -t $(DESIGN)-$(PROGRAM)$*.asc 2>&1 | tee -a $(DESIGN)-$(PROGRAM)$*-pnr.txt
-	{ { date +"%D %T"; echo $(DESIGN)-$(PROGRAM)$*; } | tr "\n" "\t\t"; tail -n 2 $(DESIGN)-$(PROGRAM)$*-pnr.txt | head -n 1; }  >> pnr-timings.txt
-	icepack $(DESIGN)-$(PROGRAM)$*.asc $(DESIGN)-$(PROGRAM)$*.bin
+	nextpnr-ice40 --up5k --package uwg30 --json $(DESIGN)-$(PROGRAM).json --pcf pcf/$(DESIGN)-$(PROGRAM).pcf --asc $(DESIGN)-$(PROGRAM)-$*.asc --log $(DESIGN)-$(PROGRAM)-$*-pnr.txt
+	echo >> $(DESIGN)-$(PROGRAM)-$*-pnr.txt; echo >> $(DESIGN)-$(PROGRAM)-$*-pnr.txt; echo >> $(DESIGN)-$(PROGRAM)-$*-pnr.txt; echo >> $(DESIGN)-$(PROGRAM)-$*-pnr.txt;
+	icetime -p pcf/$(DESIGN)-$(PROGRAM).pcf -P uwg30 -d up5k -t $(DESIGN)-$(PROGRAM)-$*.asc 2>&1 | tee -a $(DESIGN)-$(PROGRAM)-$*-pnr.txt
+	{ { date +"%D %T"; echo $(DESIGN)-$(PROGRAM)-$*; } | tr "\n" "\t\t"; tail -n 2 $(DESIGN)-$(PROGRAM)-$*-pnr.txt | head -n 1; }  >> pnr-timings.txt
+	icepack $(DESIGN)-$(PROGRAM)-$*.asc $(DESIGN)-$(PROGRAM)-$*.bin
 
 
 
@@ -52,4 +52,8 @@ clean-program:
 	cd $(CURDIR)
 	rm programs/*
 clean:
-	rm -f *.json *.blif *.asc *.bin *.ys *-synth.v *-pnr.txt
+	rm -f *.json *.blif *.asc
+
+clean-all: clean clean-program
+	rm -f *-pnr.txt *-synth.v *.bin *.ys
+	echo > pnr-timings.txt
